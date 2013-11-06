@@ -1,0 +1,12 @@
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+
+    group = 'net.kencochrane.raven'
+    version = '4.1.2-SNAPSHOT'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
