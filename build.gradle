@@ -5,6 +5,18 @@ subprojects {
     group = 'net.kencochrane.raven'
     version = '4.1.2-SNAPSHOT'
 
+    project.ext.slf4jVersion = '1.7.5'
+    project.ext.guavaVersion = '15.0'
+    project.ext.jacksonVersion = '2.2.3'
+    project.ext.servletVersion = '3.0.1'
+    project.ext.logbackVersion = '1.0.13'
+    project.ext.log4jVersion = '1.2.17'
+    project.ext.log4j2Version = '2.0-beta9'
+    project.ext.mockitoVersion = '1.9.5'
+    project.ext.jmockitVersion = '1.5'
+    project.ext.testngVersion = '6.8.7'
+    project.ext.hamcrestVersion = '1.3'
+
     repositories {
         mavenLocal()
         mavenCentral()
