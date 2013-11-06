@@ -1,6 +1,7 @@
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
+    apply plugin: 'checkstyle'
 
     group = 'net.kencochrane.raven'
     version = '4.1.2-SNAPSHOT'
@@ -16,6 +17,10 @@ subprojects {
     project.ext.jmockitVersion = '1.5'
     project.ext.testngVersion = '6.8.7'
     project.ext.hamcrestVersion = '1.3'
+
+    checkstyleMain {
+        configFile  = rootProject.file('config/checkstyle/checkstyle.xml')
+    }
 
     repositories {
         mavenLocal()
