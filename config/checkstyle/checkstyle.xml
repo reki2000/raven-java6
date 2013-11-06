@@ -32,9 +32,6 @@
 
 <module name="Checker">
     <!-- Enable checkstyle suppression -->
-    <module name="SuppressionFilter">
-        <property name="file" value="src/checkstyle/suppressions.xml"/>
-    </module>
     <module name="SuppressionCommentFilter">
         <property name="offCommentFormat" value="CHECKSTYLE.OFF\: (.+)"/>
         <property name="onCommentFormat" value="CHECKSTYLE.ON\: (.+)"/>
