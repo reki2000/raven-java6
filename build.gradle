@@ -21,4 +21,8 @@ subprojects {
         mavenLocal()
         mavenCentral()
     }
+
+    test {
+        useTestNG()
+    }
 }
