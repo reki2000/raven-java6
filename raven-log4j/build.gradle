@@ -1,3 +1,5 @@
+description = 'log4j appender allowing to send logs to the Raven-Java client'
+
 dependencies {
     compile project(':raven')
     compile group: 'log4j', name: 'log4j', version: project.ext.log4jVersion

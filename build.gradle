@@ -1,3 +1,5 @@
+description = 'Sentry client and appenders for diverse logging frameworks'
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'

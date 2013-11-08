@@ -1,3 +1,5 @@
+description = 'Sentry client written in Java'
+
 configurations {
     provided
     compile.extendsFrom provided
