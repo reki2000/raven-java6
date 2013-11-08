@@ -10,15 +10,15 @@ sourceSets {
 }
 
 dependencies {
-    compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
-    compile group: 'com.google.guava', name: 'guava', version: project.ext.guavaVersion
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: project.ext.jacksonVersion
-    provided group: 'javax.servlet', name: 'javax.servlet-api', version: project.ext.servletVersion
-    testCompile group: 'org.slf4j', name: 'slf4j-jdk14', version: project.ext.slf4jVersion
-    testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: project.ext.jacksonVersion
-    testCompile group: 'org.mockito', name: 'mockito-core', version: project.ext.mockitoVersion
-    testCompile group: 'com.googlecode.jmockit', name: 'jmockit', version: project.ext.jmockitVersion
-    testCompile group: 'org.testng', name: 'testng', version: project.ext.testngVersion
-    testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: project.ext.hamcrestVersion
-    testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: project.ext.hamcrestVersion
+    compile group: 'org.slf4j', name: 'slf4j-api', version: ext.slf4jVersion
+    compile group: 'com.google.guava', name: 'guava', version: ext.guavaVersion
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: ext.jacksonVersion
+    provided group: 'javax.servlet', name: 'javax.servlet-api', version: ext.servletVersion
+    testCompile group: 'org.slf4j', name: 'slf4j-jdk14', version: ext.slf4jVersion
+    testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: ext.jacksonVersion
+    testCompile group: 'org.mockito', name: 'mockito-core', version: ext.mockitoVersion
+    testCompile group: 'com.googlecode.jmockit', name: 'jmockit', version: ext.jmockitVersion
+    testCompile group: 'org.testng', name: 'testng', version: ext.testngVersion
+    testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: ext.hamcrestVersion
+    testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: ext.hamcrestVersion
 }
