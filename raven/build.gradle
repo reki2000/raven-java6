@@ -26,11 +26,13 @@ dependencies {
 task generateBuildNumber(type: Copy) {
     description = 'Creates a raven-build.properties with the current build number'
 
-    from 'src/main/resources/raven-build.properties'
+    from 'src/main/resources/'
     into "$buildDir/generated-resources"
-    expand([
-            buildNumber: 'git describe --tags'.execute(Collections.emptyList(), rootDir).text.trim()
-    ])
+    include 'raven-build.properties'
+    // Work around for GRADLE-1298
+    outputs.upToDateWhen { false }
+
+    expand(buildNumber: 'git describe --tags'.execute(Collections.emptyList(), rootDir).text.trim())
 }
 
 jar {
