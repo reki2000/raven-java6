@@ -4,6 +4,9 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'checkstyle'
+    apply plugin: 'findbugs'
+    apply plugin: 'pmd'
+    apply plugin: 'jdepend'
 
     group = 'net.kencochrane.raven'
     version = '4.1.2-SNAPSHOT'
