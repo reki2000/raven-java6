@@ -6,6 +6,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,6 +18,8 @@ public class SentryHandlerTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
+        // Workaround for GRADLE-2524
+        LogManager.getLogManager().readConfiguration();
         sentryStub = new SentryStub();
         sentryStub.removeEvents();
     }
