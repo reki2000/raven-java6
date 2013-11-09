@@ -1,0 +1,13 @@
+description = 'log4j2 appender allowing to send logs to the Raven-Java client'
+
+ext.log4j2Version = '2.0-beta9'
+
+dependencies {
+    compile project(':raven')
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: ext.log4j2Version
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: ext.log4j2Version
+    testCompile group: 'com.googlecode.jmockit', name: 'jmockit', version: ext.jmockitVersion
+    testCompile group: 'org.testng', name: 'testng', version: ext.testngVersion
+    testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: ext.hamcrestVersion
+    testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: ext.hamcrestVersion
+}
