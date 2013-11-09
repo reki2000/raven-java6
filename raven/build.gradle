@@ -40,3 +40,7 @@ jar {
 }
 
 jar.dependsOn generateBuildNumber
+
+integrationTest{
+    systemProperty 'java.util.logging.config.file', "$projectDir/src/integration-test/resources/logging.properties"
+}
