@@ -11,8 +11,8 @@ import java.util.logging.Logger;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class SentryHandlerIT {
-    private static final Logger logger = Logger.getLogger(SentryHandlerIT.class.getName());
+public class SentryHandlerTest {
+    private static final Logger logger = Logger.getLogger(SentryHandlerTest.class.getName());
     private SentryStub sentryStub;
 
     @BeforeMethod
