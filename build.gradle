@@ -12,7 +12,6 @@ subprojects {
     ext.guavaVersion = '15.0'
     ext.jacksonVersion = '2.2.3'
     ext.servletVersion = '3.0.1'
-    ext.logbackVersion = '1.0.13'
     ext.mockitoVersion = '1.9.5'
     ext.jmockitVersion = '1.5'
     ext.testngVersion = '6.8.7'

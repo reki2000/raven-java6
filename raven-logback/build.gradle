@@ -1,0 +1,14 @@
+description = 'Logback appender allowing to send logs to the Raven-Java client'
+
+ext.logbackVersion = '1.0.13'
+
+dependencies {
+    compile project(':raven')
+    compile group: 'org.slf4j', name: 'slf4j-api', version: ext.slf4jVersion
+    compile group: 'ch.qos.logback', name: 'logback-core', version: ext.logbackVersion
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: ext.logbackVersion
+    testCompile group: 'com.googlecode.jmockit', name: 'jmockit', version: ext.jmockitVersion
+    testCompile group: 'org.testng', name: 'testng', version: ext.testngVersion
+    testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: ext.hamcrestVersion
+    testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: ext.hamcrestVersion
+}
