@@ -25,6 +25,18 @@ subprojects {
         sourceSets = [sourceSets.main]
     }
 
+    findbugs {
+        sourceSets = [sourceSets.main]
+    }
+
+    pmd {
+        sourceSets = [sourceSets.main]
+    }
+
+    jdepend {
+        sourceSets = [sourceSets.main]
+    }
+
     repositories {
         mavenCentral()
     }
