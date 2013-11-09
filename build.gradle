@@ -55,6 +55,4 @@ subprojects {
         integrationTestCompile configurations.testCompile
         integrationTestRuntime configurations.testRuntime
     }
-
-    check.dependsOn integrationTest
 }
