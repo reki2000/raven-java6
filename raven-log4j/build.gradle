@@ -4,11 +4,11 @@ ext.log4jVersion = '1.2.17'
 
 dependencies {
     compile project(':raven')
-    compile group: 'log4j', name: 'log4j', version: project.ext.log4jVersion
-    testCompile group: 'com.googlecode.jmockit', name: 'jmockit', version: project.ext.jmockitVersion
-    testCompile group: 'org.testng', name: 'testng', version: project.ext.testngVersion
-    testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: project.ext.hamcrestVersion
-    testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: project.ext.hamcrestVersion
-    testCompile group: 'com.google.guava', name: 'guava', version: project.ext.guavaVersion
-    testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: project.ext.jacksonVersion
+    compile group: 'log4j', name: 'log4j', version: ext.log4jVersion
+    testCompile group: 'com.googlecode.jmockit', name: 'jmockit', version: ext.jmockitVersion
+    testCompile group: 'org.testng', name: 'testng', version: ext.testngVersion
+    testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: ext.hamcrestVersion
+    testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: ext.hamcrestVersion
+    testCompile group: 'com.google.guava', name: 'guava', version: ext.guavaVersion
+    testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: ext.jacksonVersion
 }
