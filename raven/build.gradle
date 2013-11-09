@@ -14,11 +14,11 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: ext.guavaVersion
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: ext.jacksonVersion
     provided group: 'javax.servlet', name: 'javax.servlet-api', version: ext.servletVersion
-    testCompile group: 'org.slf4j', name: 'slf4j-jdk14', version: ext.slf4jVersion
     testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: ext.jacksonVersion
     testCompile group: 'org.mockito', name: 'mockito-core', version: ext.mockitoVersion
     testCompile group: 'com.googlecode.jmockit', name: 'jmockit', version: ext.jmockitVersion
     testCompile group: 'org.testng', name: 'testng', version: ext.testngVersion
     testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: ext.hamcrestVersion
     testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: ext.hamcrestVersion
+    integrationTestRuntime group: 'org.slf4j', name: 'slf4j-jdk14', version: ext.slf4jVersion
 }

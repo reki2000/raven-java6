@@ -31,4 +31,29 @@ subprojects {
     test {
         useTestNG()
     }
+
+    sourceSets {
+        integrationTest {
+            java.srcDir file('src/integration-test/java')
+            resources.srcDir file('src/integration-test/resources')
+        }
+    }
+
+    task integrationTest(type: Test) {
+        description = 'Runs the integration tests.'
+        group = 'verification'
+
+        useTestNG()
+        testClassesDir = sourceSets.integrationTest.output.classesDir
+        classpath = sourceSets.integrationTest.runtimeClasspath
+        reports.html.destination = file("$buildDir/reports/integration-tests")
+    }
+
+    dependencies {
+        integrationTestCompile sourceSets.main.output
+        integrationTestCompile configurations.testCompile
+        integrationTestRuntime configurations.testRuntime
+    }
+
+    check.dependsOn integrationTest
 }
