@@ -22,3 +22,19 @@ dependencies {
     testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: ext.hamcrestVersion
     integrationTestRuntime group: 'org.slf4j', name: 'slf4j-jdk14', version: ext.slf4jVersion
 }
+
+task generateBuildNumber(type: Copy) {
+    description = 'Creates a raven-build.properties with the current build number'
+
+    from 'src/main/resources/raven-build.properties'
+    into "$buildDir/generated-resources"
+    expand([
+            buildNumber: 'git describe --tags'.execute(Collections.emptyList(), rootDir).text.trim()
+    ])
+}
+
+jar {
+    from "$buildDir/generated-resources/raven-build.properties"
+}
+
+jar.dependsOn generateBuildNumber
