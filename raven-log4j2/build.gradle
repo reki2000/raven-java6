@@ -6,6 +6,7 @@ dependencies {
     compile project(':raven')
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: ext.log4j2Version
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: ext.log4j2Version
+    compile group: 'com.google.guava', name: 'guava', version: ext.guavaVersion
     testCompile group: 'com.googlecode.jmockit', name: 'jmockit', version: ext.jmockitVersion
     testCompile group: 'org.testng', name: 'testng', version: ext.testngVersion
     testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: ext.hamcrestVersion

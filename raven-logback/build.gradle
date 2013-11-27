@@ -7,6 +7,7 @@ dependencies {
     compile group: 'org.slf4j', name: 'slf4j-api', version: ext.slf4jVersion
     compile group: 'ch.qos.logback', name: 'logback-core', version: ext.logbackVersion
     compile group: 'ch.qos.logback', name: 'logback-classic', version: ext.logbackVersion
+    compile group: 'com.google.guava', name: 'guava', version: ext.guavaVersion
     testCompile group: 'com.googlecode.jmockit', name: 'jmockit', version: ext.jmockitVersion
     testCompile group: 'org.testng', name: 'testng', version: ext.testngVersion
     testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: ext.hamcrestVersion
