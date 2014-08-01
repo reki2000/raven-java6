@@ -24,6 +24,7 @@ import static com.google.common.io.BaseEncoding.base64;
  * <p>
  * The content can also be compressed with {@link DeflaterOutputStream} in which case the binary result is encoded
  * in base 64.
+ * </p>
  */
 public class JsonMarshaller implements Marshaller {
     /**
@@ -81,18 +82,10 @@ public class JsonMarshaller implements Marshaller {
     /**
      * Date format for ISO 8601.
      */
-    private static final ThreadLocal<DateFormat> ISO_FORMAT = new ThreadLocal<DateFormat>() {
-        @Override
-        protected DateFormat initialValue() {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-            return dateFormat;
-        }
-    };
-
+    private static final String ISO_8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
     private static final Logger logger = LoggerFactory.getLogger(JsonMarshaller.class);
     private final JsonFactory jsonFactory = new JsonFactory();
-    private final Map<Class<? extends SentryInterface>, InterfaceBinding<?>> interfaceBindings = new HashMap<>();
+    private final Map<Class<? extends SentryInterface>, InterfaceBinding> interfaceBindings = new HashMap<Class<? extends SentryInterface>, InterfaceBinding>();
     /**
      * Enables disables the compression of JSON.
      */
@@ -107,10 +100,16 @@ public class JsonMarshaller implements Marshaller {
             destination = new DeflaterOutputStream(base64().encodingStream(
                     new OutputStreamWriter(destination, Charsets.UTF_8)));
 
-        try (JsonGenerator generator = jsonFactory.createGenerator(destination)) {
+        {
+            JsonGenerator generator = null;
+        try  {
+            generator = jsonFactory.createGenerator(destination);
             writeContent(generator, event);
         } catch (IOException e) {
             logger.error("An exception occurred while serialising the event.", e);
+        } finally {
+            if (generator != null) { try { generator.close(); } catch (IOException e) {} }
+        }
         }
     }
 
@@ -119,7 +118,7 @@ public class JsonMarshaller implements Marshaller {
 
         generator.writeStringField(EVENT_ID, formatId(event.getId()));
         generator.writeStringField(MESSAGE, formatMessage(event.getMessage()));
-        generator.writeStringField(TIMESTAMP, ISO_FORMAT.get().format(event.getTimestamp()));
+        generator.writeStringField(TIMESTAMP, formatTimestamp(event.getTimestamp()));
         generator.writeStringField(LEVEL, formatLevel(event.getLevel()));
         generator.writeStringField(LOGGER, event.getLogger());
         generator.writeStringField(PLATFORM, event.getPlatform());
@@ -133,6 +132,7 @@ public class JsonMarshaller implements Marshaller {
         generator.writeEndObject();
     }
 
+    @SuppressWarnings("unchecked")
     private void writeInterfaces(JsonGenerator generator, Map<String, SentryInterface> sentryInterfaces)
             throws IOException {
         for (Map.Entry<String, SentryInterface> interfaceEntry : sentryInterfaces.entrySet()) {
@@ -140,18 +140,12 @@ public class JsonMarshaller implements Marshaller {
 
             if (interfaceBindings.containsKey(sentryInterface.getClass())) {
                 generator.writeFieldName(interfaceEntry.getKey());
-                getInterfaceBinding(sentryInterface).writeInterface(generator, interfaceEntry.getValue());
+                interfaceBindings.get(sentryInterface.getClass()).writeInterface(generator, sentryInterface);
             } else {
                 logger.error("Couldn't parse the content of '{}' provided in {}.",
                         interfaceEntry.getKey(), sentryInterface);
             }
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T extends SentryInterface> InterfaceBinding<? super T> getInterfaceBinding(T sentryInterface) {
-        // Reduces the @SuppressWarnings to a oneliner
-        return (InterfaceBinding<? super T>) interfaceBindings.get(sentryInterface.getClass());
     }
 
     private void writeExtras(JsonGenerator generator, Map<String, Object> extras) throws IOException {
@@ -188,7 +182,6 @@ public class JsonMarshaller implements Marshaller {
             generator.writeNull();
         } else {
             try {
-                /** @see com.fasterxml.jackson.core.JsonGenerator#_writeSimpleObject(Object)  */
                 generator.writeObject(value);
             } catch (IllegalStateException e) {
                 logger.debug("Couldn't marshal '{}' of type '{}', had to be converted into a String",
@@ -252,10 +245,22 @@ public class JsonMarshaller implements Marshaller {
             case ERROR:
                 return "error";
             default:
-                logger.error("The level '{}' isn't supported, this should NEVER happen, contact Raven developers",
+                logger.warn("The level '{}' isn't supported, this should NEVER happen, contact Raven developers",
                         level.name());
                 return null;
         }
+    }
+
+    /**
+     * Formats a timestamp in the ISO-8601 format without timezone.
+     *
+     * @param timestamp date to format.
+     * @return timestamp as a formatted String.
+     */
+    private String formatTimestamp(Date timestamp) {
+        DateFormat isoFormat = new SimpleDateFormat(ISO_8601_FORMAT);
+        isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return isoFormat.format(timestamp);
     }
 
     /**

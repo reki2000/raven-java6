@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.sameInstance;
 public class EventTest {
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void ensureEventIdCantBeNull() throws Exception {
-        new Event(null);
+        final Event event = new Event(null);
     }
 
     @Test

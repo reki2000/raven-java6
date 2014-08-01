@@ -5,12 +5,12 @@ import net.kencochrane.raven.Raven;
 import net.kencochrane.raven.RavenFactory;
 import net.kencochrane.raven.dsn.Dsn;
 import net.kencochrane.raven.dsn.InvalidDsnException;
-import net.kencochrane.raven.environment.RavenEnvironment;
 import net.kencochrane.raven.event.Event;
 import net.kencochrane.raven.event.EventBuilder;
 import net.kencochrane.raven.event.interfaces.ExceptionInterface;
 import net.kencochrane.raven.event.interfaces.MessageInterface;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.*;
@@ -22,7 +22,7 @@ public class SentryHandler extends Handler {
     /**
      * Name of the {@link Event#extra} property containing the Thread id.
      */
-    public static final String THREAD_ID = "Raven-ThreadId";
+    public static final String THREAD_ID = "Raven-Threadid";
     /**
      * Current instance of {@link Raven}.
      *
@@ -33,12 +33,14 @@ public class SentryHandler extends Handler {
      * DSN property of the appender.
      * <p>
      * Might be null in which case the DSN should be detected automatically.
+     * </p>
      */
     protected String dsn;
     /**
      * Name of the {@link RavenFactory} being used.
      * <p>
      * Might be null in which case the factory should be defined automatically.
+     * </p>
      */
     protected String ravenFactory;
     /**
@@ -84,12 +86,13 @@ public class SentryHandler extends Handler {
      * Extracts message parameters into a List of Strings.
      * <p>
      * null parameters are kept as null.
+     * </p>
      *
      * @param parameters parameters provided to the logging system.
      * @return the parameters formatted as Strings in a List.
      */
     protected static List<String> formatMessageParameters(Object[] parameters) {
-        List<String> formattedParameters = new ArrayList<>(parameters.length);
+        List<String> formattedParameters = new ArrayList<String>(parameters.length);
         for (Object parameter : parameters)
             formattedParameters.add((parameter != null) ? parameter.toString() : null);
         return formattedParameters;
@@ -100,10 +103,9 @@ public class SentryHandler extends Handler {
      */
     protected void retrieveProperties() {
         LogManager manager = LogManager.getLogManager();
-        String className = SentryHandler.class.getName();
-        dsn = manager.getProperty(className + ".dsn");
-        ravenFactory = manager.getProperty(className + ".ravenFactory");
-        String tagsProperty = manager.getProperty(className + ".tags");
+        dsn = manager.getProperty(SentryHandler.class.getName() + ".dsn");
+        ravenFactory = manager.getProperty(SentryHandler.class.getName() + ".ravenFactory");
+        String tagsProperty = manager.getProperty(SentryHandler.class.getName() + ".tags");
         if (tagsProperty != null)
             tags = Splitter.on(",").withKeyValueSeparator(":").split(tagsProperty);
     }
@@ -111,11 +113,11 @@ public class SentryHandler extends Handler {
     @Override
     public void publish(LogRecord record) {
         // Do not log the event if the current thread is managed by raven
-        if (!isLoggable(record) || RavenEnvironment.isManagingThread())
+        if (!isLoggable(record) || Raven.isManagingThread())
             return;
 
-        RavenEnvironment.startManagingThread();
         try {
+            Raven.startManagingThread();
             if (raven == null)
                 initRaven();
             Event event = buildEvent(record);
@@ -123,7 +125,7 @@ public class SentryHandler extends Handler {
         } catch (Exception e) {
             reportError("An exception occurred while creating a new event in Raven", e, ErrorManager.WRITE_FAILURE);
         } finally {
-            RavenEnvironment.stopManagingThread();
+            Raven.stopManagingThread();
         }
     }
 
@@ -167,9 +169,8 @@ public class SentryHandler extends Handler {
         }
         eventBuilder.setMessage(message);
 
-        Throwable throwable = record.getThrown();
-        if (throwable != null)
-            eventBuilder.addSentryInterface(new ExceptionInterface(throwable));
+        if (record.getThrown() != null)
+            eventBuilder.addSentryInterface(new ExceptionInterface(record.getThrown()));
 
         if (record.getSourceClassName() != null && record.getSourceMethodName() != null) {
             StackTraceElement fakeFrame = new StackTraceElement(record.getSourceClassName(),
@@ -195,14 +196,11 @@ public class SentryHandler extends Handler {
 
     @Override
     public void close() throws SecurityException {
-        RavenEnvironment.startManagingThread();
         try {
             if (raven != null)
-                raven.closeConnection();
-        } catch (Exception e) {
+                raven.getConnection().close();
+        } catch (IOException e) {
             reportError("An exception occurred while closing the Raven connection", e, ErrorManager.CLOSE_FAILURE);
-        } finally {
-            RavenEnvironment.stopManagingThread();
         }
     }
 }

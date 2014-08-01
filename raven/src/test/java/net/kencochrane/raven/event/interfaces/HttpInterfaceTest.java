@@ -2,22 +2,25 @@ package net.kencochrane.raven.event.interfaces;
 
 import mockit.Injectable;
 import mockit.NonStrictExpectations;
+
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class HttpInterfaceTest {
     @Injectable
-    private HttpServletRequest mockHttpServletRequest = null;
+    private HttpServletRequest mockHttpServletRequest;
     @Injectable
-    private Cookie mockCookie = null;
+    private Cookie mockCookie;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -55,12 +58,37 @@ public class HttpInterfaceTest {
             mockHttpServletRequest.getRemoteUser();
             result = "remoteUser";
             mockHttpServletRequest.getHeaderNames();
-            result = Collections.emptyEnumeration();
+            result = EmptyEnumeration.enumeration;
             mockHttpServletRequest.getHeaders(anyString);
-            result = Collections.emptyEnumeration();
+            result = EmptyEnumeration.enumeration;
         }};
     }
 
+    static public class EmptyEnumeration implements Enumeration 
+    {
+        public static Enumeration getInstance()
+        {
+            return enumeration;
+        }
+        
+        /**
+         * @return false;
+         */
+         public boolean hasMoreElements()
+         {
+            return false;
+         }
+         
+        /**
+         * @return null
+         */
+         public Object nextElement()
+         {
+            return null;
+         }
+         
+         protected static Enumeration enumeration = new EmptyEnumeration();
+    }
     @Test
     public void testHttpServletCopied() throws Exception {
         final String requestUrl = "713d97ff-bda1-4bbe-85bd-42a7bc203551";

@@ -3,45 +3,34 @@ package net.kencochrane.raven.log4j2;
 import mockit.Expectations;
 import mockit.Injectable;
 import mockit.Mocked;
-import mockit.Tested;
 import net.kencochrane.raven.Raven;
 import net.kencochrane.raven.RavenFactory;
 import net.kencochrane.raven.dsn.Dsn;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public class SentryAppenderDsnTest {
-    @Tested
-    private SentryAppender sentryAppender = null;
     private MockUpErrorHandler mockUpErrorHandler = new MockUpErrorHandler();
     @Injectable
     private Raven mockRaven = null;
-    @SuppressWarnings("unused")
     @Mocked("ravenInstance")
-    private RavenFactory mockRavenFactory = null;
-    @SuppressWarnings("unused")
+    private RavenFactory mockRavenFactory;
     @Mocked("dsnLookup")
-    private Dsn mockDsn = null;
-
-    @BeforeMethod
-    public void setUp() throws Exception {
-        sentryAppender = new SentryAppender();
-        sentryAppender.setHandler(mockUpErrorHandler.getMockInstance());
-    }
+    private Dsn dsn;
 
     private void assertNoErrorsInErrorHandler() throws Exception {
         assertThat(mockUpErrorHandler.getErrorCount(), is(0));
     }
 
     @Test
-    public void testDsnDetected() throws Exception {
-        final String dsnUri = "protocol://public:private@host/1";
+    public void testLazyInitialisation() throws Exception {
+        final String dsnUri = "proto://private:public@host/1";
+        final SentryAppender sentryAppender = new SentryAppender();
+        sentryAppender.setHandler(mockUpErrorHandler.getMockInstance());
+        sentryAppender.setDsn(dsnUri);
         new Expectations() {{
-            Dsn.dsnLookup();
-            result = dsnUri;
             RavenFactory.ravenInstance(withEqual(new Dsn(dsnUri)), anyString);
             result = mockRaven;
         }};
@@ -52,10 +41,13 @@ public class SentryAppenderDsnTest {
     }
 
     @Test
-    public void testDsnProvided() throws Exception {
-        final String dsnUri = "protocol://public:private@host/2";
-        sentryAppender.setDsn(dsnUri);
+    public void testDsnAutoDetection() throws Exception {
+        final String dsnUri = "proto://private:public@host/1";
+        final SentryAppender sentryAppender = new SentryAppender();
+        sentryAppender.setHandler(mockUpErrorHandler.getMockInstance());
         new Expectations() {{
+            Dsn.dsnLookup();
+            result = dsnUri;
             RavenFactory.ravenInstance(withEqual(new Dsn(dsnUri)), anyString);
             result = mockRaven;
         }};

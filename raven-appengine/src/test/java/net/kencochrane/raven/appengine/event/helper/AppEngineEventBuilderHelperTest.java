@@ -16,18 +16,17 @@ import static org.hamcrest.Matchers.is;
 
 public class AppEngineEventBuilderHelperTest {
     @Tested
-    private AppEngineEventBuilderHelper eventBuilderHelper = null;
+    private AppEngineEventBuilderHelper eventBuilderHelper;
     @Injectable
-    private EventBuilder mockEventBuilder = null;
-    @SuppressWarnings("unused")
+    private EventBuilder mockEventBuilder;
     @Mocked("getCurrentEnvironment")
     private ApiProxy mockApiProxy;
     @Injectable
-    private ApiProxy.Environment mockEnvironment = null;
+    private ApiProxy.Environment mockEnvironment;
     @Injectable
-    private SystemProperty mockApplicationId = null;
+    private SystemProperty mockApplicationId;
     @Injectable
-    private SystemProperty mockApplicationVersion = null;
+    private SystemProperty mockApplicationVersion;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -71,11 +70,11 @@ public class AppEngineEventBuilderHelperTest {
         eventBuilderHelper.helpBuildingEvent(mockEventBuilder);
 
         new Verifications() {{
-            List<String> tagNames = new LinkedList<>();
-            List<String> tagValues = new LinkedList<>();
+            List<String> tagNames = new LinkedList<String>();
+            List<String> tagValues = new LinkedList<String>();
             mockEventBuilder.addTag(withCapture(tagNames), withCapture(tagValues));
 
-            Map<String, String> tags = new HashMap<>();
+            Map<String, String> tags = new HashMap<String, String>();
             for (int i = 0; i < tagNames.size(); i++) {
                 String tagName = tagNames.get(i);
                 tags.put(tagName, tagValues.get(i));
@@ -96,11 +95,11 @@ public class AppEngineEventBuilderHelperTest {
         eventBuilderHelper.helpBuildingEvent(mockEventBuilder);
 
         new Verifications() {{
-            List<String> tagNames = new LinkedList<>();
-            List<String> tagValues = new LinkedList<>();
+            List<String> tagNames = new LinkedList<String>();
+            List<String> tagValues = new LinkedList<String>();
             mockEventBuilder.addTag(withCapture(tagNames), withCapture(tagValues));
 
-            Map<String, String> tags = new HashMap<>();
+            Map<String, String> tags = new HashMap<String, String>();
             for (int i = 0; i < tagNames.size(); i++) {
                 String tagName = tagNames.get(i);
                 tags.put(tagName, tagValues.get(i));

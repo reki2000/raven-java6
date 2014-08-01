@@ -10,7 +10,6 @@ import net.kencochrane.raven.Raven;
 import net.kencochrane.raven.RavenFactory;
 import net.kencochrane.raven.dsn.Dsn;
 import net.kencochrane.raven.dsn.InvalidDsnException;
-import net.kencochrane.raven.environment.RavenEnvironment;
 import net.kencochrane.raven.event.Event;
 import net.kencochrane.raven.event.EventBuilder;
 import net.kencochrane.raven.event.interfaces.ExceptionInterface;
@@ -18,6 +17,7 @@ import net.kencochrane.raven.event.interfaces.MessageInterface;
 import net.kencochrane.raven.event.interfaces.SentryException;
 import net.kencochrane.raven.event.interfaces.StackTraceInterface;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -43,18 +43,21 @@ public class SentryAppender extends AppenderBase<ILoggingEvent> {
      * DSN property of the appender.
      * <p>
      * Might be null in which case the DSN should be detected automatically.
+     * </p>
      */
     protected String dsn;
     /**
      * Name of the {@link RavenFactory} being used.
      * <p>
      * Might be null in which case the factory should be defined automatically.
+     * </p>
      */
     protected String ravenFactory;
     /**
      * Additional tags to be sent to sentry.
      * <p>
      * Might be empty in which case no tags are sent.
+     * </p>
      */
     protected Map<String, String> tags = Collections.emptyMap();
 
@@ -77,12 +80,13 @@ public class SentryAppender extends AppenderBase<ILoggingEvent> {
      * Extracts message parameters into a List of Strings.
      * <p>
      * null parameters are kept as null.
+     * </p>
      *
      * @param parameters parameters provided to the logging system.
      * @return the parameters formatted as Strings in a List.
      */
     protected static List<String> formatMessageParameters(Object[] parameters) {
-        List<String> arguments = new ArrayList<>(parameters.length);
+        List<String> arguments = new ArrayList<String>(parameters.length);
         for (Object argument : parameters) {
             arguments.add((argument != null) ? argument.toString() : null);
         }
@@ -111,17 +115,19 @@ public class SentryAppender extends AppenderBase<ILoggingEvent> {
      * {@inheritDoc}
      * <p>
      * The raven instance is started in this method instead of {@link #start()} in order to avoid substitute loggers
-     * being generated during the instantiation of {@link Raven}.<br>
+     * being generated during the instantiation of {@link Raven}.<br />
      * More on <a href="http://www.slf4j.org/codes.html#substituteLogger">www.slf4j.org/codes.html#substituteLogger</a>
+     * </p>
      */
     @Override
     protected void append(ILoggingEvent iLoggingEvent) {
         // Do not log the event if the current thread is managed by raven
-        if (RavenEnvironment.isManagingThread())
+        if (Raven.isManagingThread())
             return;
 
-        RavenEnvironment.startManagingThread();
         try {
+            Raven.startManagingThread();
+
             if (raven == null)
                 initRaven();
 
@@ -130,7 +136,7 @@ public class SentryAppender extends AppenderBase<ILoggingEvent> {
         } catch (Exception e) {
             addError("An exception occurred while creating a new event in Raven", e);
         } finally {
-            RavenEnvironment.stopManagingThread();
+            Raven.stopManagingThread();
         }
     }
 
@@ -201,8 +207,8 @@ public class SentryAppender extends AppenderBase<ILoggingEvent> {
 
     private Deque<SentryException> extractExceptionQueue(ILoggingEvent iLoggingEvent) {
         IThrowableProxy throwableProxy = iLoggingEvent.getThrowableProxy();
-        Deque<SentryException> exceptions = new ArrayDeque<>();
-        Set<IThrowableProxy> circularityDetector = new HashSet<>();
+        Deque<SentryException> exceptions = new ArrayDeque<SentryException>();
+        Set<IThrowableProxy> circularityDetector = new HashSet<IThrowableProxy>();
         StackTraceElement[] enclosingStackTrace = new StackTraceElement[0];
 
         //Stack the exceptions to send them in the reverse order
@@ -282,17 +288,13 @@ public class SentryAppender extends AppenderBase<ILoggingEvent> {
 
     @Override
     public void stop() {
-        RavenEnvironment.startManagingThread();
+        super.stop();
+
         try {
-            if (!isStarted())
-                return;
-            super.stop();
             if (raven != null)
-                raven.closeConnection();
-        } catch (Exception e) {
+                raven.getConnection().close();
+        } catch (IOException e) {
             addError("An exception occurred while closing the Raven connection", e);
-        } finally {
-            RavenEnvironment.stopManagingThread();
         }
     }
 }

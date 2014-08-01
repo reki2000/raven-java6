@@ -1,7 +1,7 @@
 package net.kencochrane.raven.connection;
 
 import mockit.*;
-import net.kencochrane.raven.environment.RavenEnvironment;
+import net.kencochrane.raven.Raven;
 import net.kencochrane.raven.event.Event;
 import net.kencochrane.raven.marshaller.Marshaller;
 import org.testng.annotations.BeforeMethod;
@@ -26,20 +26,21 @@ public class HttpConnectionTest {
     @Injectable
     private final String secretKey = "e30cca23-3f97-470b-a8c2-e29b33dd25e0";
     @Tested
-    private HttpConnection httpConnection = null;
+    private HttpConnection httpConnection;
     @Injectable
-    private HttpsURLConnection mockUrlConnection = null;
+    private HttpsURLConnection mockUrlConnection;
     @Injectable
-    private Marshaller mockMarshaller = null;
+    private Marshaller mockMarshaller;
     @Injectable
-    private URL mockUrl = null;
+    private URL mockUrl;
     @Injectable
-    private OutputStream mockOutputStream = null;
+    private OutputStream mockOutputStream;
     @Injectable
-    private InputStream mockInputStream = null;
+    private InputStream mockInputStream;
 
     @BeforeMethod
     public void setUp() throws Exception {
+        httpConnection = null;
         new NonStrictExpectations() {{
             mockUrl.openConnection();
             result = mockUrlConnection;
@@ -114,7 +115,7 @@ public class HttpConnectionTest {
 
 
         new Verifications() {{
-            mockUrlConnection.setRequestProperty("User-Agent", RavenEnvironment.NAME);
+            mockUrlConnection.setRequestProperty("User-Agent", Raven.NAME);
             mockUrlConnection.setRequestProperty("X-Sentry-Auth", httpConnection.getAuthHeader());
         }};
     }

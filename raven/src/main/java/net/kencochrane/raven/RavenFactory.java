@@ -13,18 +13,20 @@ import java.util.Set;
  * Factory in charge of creating {@link Raven} instances.
  * <p>
  * The factories register themselves through the {@link ServiceLoader} system.
+ * </p>
  */
 public abstract class RavenFactory {
     private static final ServiceLoader<RavenFactory> AUTO_REGISTERED_FACTORIES = ServiceLoader.load(RavenFactory.class);
-    private static final Set<RavenFactory> MANUALLY_REGISTERED_FACTORIES = new HashSet<>();
+    private static final Set<RavenFactory> MANUALLY_REGISTERED_FACTORIES = new HashSet<RavenFactory>();
     private static final Logger logger = LoggerFactory.getLogger(RavenFactory.class);
 
     /**
      * Manually adds a RavenFactory to the system.
      * <p>
      * Usually RavenFactories are automatically detected with the {@link ServiceLoader} system, but some systems
-     * such as Android do not provide a fully working ServiceLoader.<br>
+     * such as Android do not provide a fully working ServiceLoader.<br />
      * If the factory isn't detected automatically, it's possible to add it through this method.
+     * </p>
      *
      * @param ravenFactory ravenFactory to support.
      */
@@ -101,11 +103,4 @@ public abstract class RavenFactory {
      * @throws RuntimeException when an instance couldn't be created.
      */
     public abstract Raven createRavenInstance(Dsn dsn);
-
-    @Override
-    public String toString() {
-        return "RavenFactory{"
-                + "name='" + this.getClass().getName() + '\''
-                + '}';
-    }
 }

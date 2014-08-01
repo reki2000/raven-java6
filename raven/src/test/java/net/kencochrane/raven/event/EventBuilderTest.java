@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.*;
 
 public class EventBuilderTest {
     @Injectable
-    private InetAddress mockLocalHost = null;
+    private InetAddress mockLocalHost;
 
     private static void resetHostnameCache() {
         setField(getHostnameCache(), "expirationTimestamp", 0l);
@@ -99,6 +99,7 @@ public class EventBuilderTest {
             result = mockTimestamp;
         }};
         final EventBuilder eventBuilder = new EventBuilder();
+        eventBuilder.setTimestamp(mockTimestamp);
 
         final Event event = eventBuilder.build();
 

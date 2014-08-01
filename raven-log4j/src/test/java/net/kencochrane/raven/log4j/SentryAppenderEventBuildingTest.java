@@ -1,7 +1,10 @@
 package net.kencochrane.raven.log4j;
 
 import com.google.common.base.Joiner;
-import mockit.*;
+import mockit.Expectations;
+import mockit.Injectable;
+import mockit.NonStrictExpectations;
+import mockit.Verifications;
 import net.kencochrane.raven.Raven;
 import net.kencochrane.raven.event.Event;
 import net.kencochrane.raven.event.EventBuilder;
@@ -26,8 +29,7 @@ import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.is;
 
 public class SentryAppenderEventBuildingTest {
-    @Tested
-    private SentryAppender sentryAppender = null;
+    private SentryAppender sentryAppender;
     private MockUpErrorHandler mockUpErrorHandler;
     @Injectable
     private Raven mockRaven = null;

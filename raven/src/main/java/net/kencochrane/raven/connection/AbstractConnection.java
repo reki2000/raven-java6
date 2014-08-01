@@ -1,6 +1,6 @@
 package net.kencochrane.raven.connection;
 
-import net.kencochrane.raven.environment.RavenEnvironment;
+import net.kencochrane.raven.Raven;
 import net.kencochrane.raven.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,9 +11,10 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Abstract connection to a Sentry server.
  * <p>
- * Provide the basic tools to submit events to the server (authentication header, dsn).<br>
+ * Provide the basic tools to submit events to the server (authentication header, dsn).<br />
  * To avoid spamming the network if and when Sentry is down, automatically lock the connection each time a
  * {@link ConnectionException} is caught.
+ * </p>
  */
 public abstract class AbstractConnection implements Connection {
     /**
@@ -39,6 +40,7 @@ public abstract class AbstractConnection implements Connection {
      * Base duration for a lockdown.
      * <p>
      * On each attempt the time is doubled until it reaches {@link #maxWaitingTime}.
+     * </p>
      */
     private long baseWaitingTime = DEFAULT_BASE_WAITING_TIME;
     private long waitingTime = baseWaitingTime;
@@ -51,7 +53,7 @@ public abstract class AbstractConnection implements Connection {
      */
     protected AbstractConnection(String publicKey, String secretKey) {
         authHeader = "Sentry sentry_version=" + SENTRY_PROTOCOL_VERSION + ","
-                + "sentry_client=" + RavenEnvironment.NAME + ","
+                + "sentry_client=" + Raven.NAME + ","
                 + "sentry_key=" + publicKey + ","
                 + "sentry_secret=" + secretKey;
     }

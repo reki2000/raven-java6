@@ -7,7 +7,6 @@ import ch.qos.logback.core.Context;
 import ch.qos.logback.core.status.OnConsoleStatusListener;
 import mockit.Injectable;
 import mockit.NonStrictExpectations;
-import mockit.Tested;
 import mockit.Verifications;
 import net.kencochrane.raven.Raven;
 import net.kencochrane.raven.event.Event;
@@ -30,8 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public class SentryAppenderEventBuildingTest {
-    @Tested
-    private SentryAppender sentryAppender = null;
+    private SentryAppender sentryAppender;
     @Injectable
     private Raven mockRaven = null;
     @Injectable

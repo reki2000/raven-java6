@@ -1,10 +1,12 @@
 package net.kencochrane.raven.log4j;
 
-import mockit.*;
+import mockit.Injectable;
+import mockit.Mocked;
+import mockit.NonStrictExpectations;
+import mockit.Verifications;
 import net.kencochrane.raven.Raven;
 import net.kencochrane.raven.RavenFactory;
 import net.kencochrane.raven.dsn.Dsn;
-import net.kencochrane.raven.environment.RavenEnvironment;
 import net.kencochrane.raven.event.Event;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -16,16 +18,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public class SentryAppenderFailuresTest {
-    @Tested
-    private SentryAppender sentryAppender = null;
+    private SentryAppender sentryAppender;
     private MockUpErrorHandler mockUpErrorHandler;
     @Injectable
     private Raven mockRaven = null;
     @Injectable
     private Logger mockLogger = null;
-    @SuppressWarnings("unused")
     @Mocked("ravenInstance")
-    private RavenFactory mockRavenFactory = null;
+    private RavenFactory mockRavenFactory;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -64,8 +64,8 @@ public class SentryAppenderFailuresTest {
 
     @Test
     public void testAppendFailIfCurrentThreadSpawnedByRaven() throws Exception {
-        RavenEnvironment.startManagingThread();
         try {
+            Raven.startManagingThread();
             sentryAppender.append(new LoggingEvent(null, mockLogger, 0, Level.INFO, null, null));
 
             new Verifications() {{
@@ -74,7 +74,7 @@ public class SentryAppenderFailuresTest {
             }};
             assertThat(mockUpErrorHandler.getErrorCount(), is(0));
         } finally {
-            RavenEnvironment.stopManagingThread();
+            Raven.stopManagingThread();
         }
     }
 }

@@ -21,17 +21,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class AppEngineAsyncConnectionTest {
-    @Tested
-    private AppEngineAsyncConnection asyncConnection = null;
+    private AppEngineAsyncConnection asyncConnection;
     @Injectable
-    private Connection mockConnection = null;
+    private Connection mockConnection;
     @Injectable
-    private Queue mockQueue = null;
-    @SuppressWarnings("unused")
+    private Queue mockQueue;
     @Mocked("getDefaultQueue")
-    private QueueFactory queueFactory = null;
+    private QueueFactory queueFactory;
     @Injectable("7b55a129-6975-4434-8edc-29ceefd38c95")
-    private String mockConnectionId = null;
+    private String mockConnectionId;
 
     private static DeferredTask extractDeferredTask(TaskOptions taskOptions) throws Exception {
         ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(taskOptions.getPayload()));
@@ -46,11 +44,11 @@ public class AppEngineAsyncConnectionTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        asyncConnection = new AppEngineAsyncConnection(mockConnectionId, mockConnection);
         new NonStrictExpectations() {{
             QueueFactory.getDefaultQueue();
             result = mockQueue;
         }};
+        asyncConnection = new AppEngineAsyncConnection(mockConnectionId, mockConnection);
     }
 
     @Test
@@ -91,19 +89,13 @@ public class AppEngineAsyncConnectionTest {
 
     @Test
     public void testQueuedEventSubmitted(@Injectable final Event mockEvent,
-                                         @SuppressWarnings("unused") @Mocked("setDoNotRetry") DeferredTaskContext deferredTaskContext)
+                                         @Mocked("setDoNotRetry") DeferredTaskContext deferredTaskContext)
             throws Exception {
         new NonStrictExpectations() {{
             mockQueue.add((TaskOptions) any);
-            result = new Delegate<TaskHandle>() {
-                @SuppressWarnings("unused")
-                TaskHandle add(TaskOptions taskOptions) {
-                    try {
-                        extractDeferredTask(taskOptions).run();
-                    } catch (Exception e) {
-                        throw new RuntimeException("Couldn't extract the task", e);
-                    }
-                    return null;
+            result = new Delegate<Void>() {
+                void add(TaskOptions taskOptions) throws Exception {
+                    extractDeferredTask(taskOptions).run();
                 }
             };
         }};
@@ -126,7 +118,7 @@ public class AppEngineAsyncConnectionTest {
         asyncConnection2.send(mockEvent);
 
         new Verifications() {{
-            List<TaskOptions> taskOptionsList = new ArrayList<>();
+            List<TaskOptions> taskOptionsList = new ArrayList<TaskOptions>();
             DeferredTask deferredTask;
 
             mockQueue.add(withCapture(taskOptionsList));

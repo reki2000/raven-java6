@@ -13,6 +13,7 @@ import javax.naming.NoInitialContextException;
  * <p>
  * Android does not support JNDI making the automatic lookup through JNDI illegal and fatal to the application.
  * Having the lookup in a separate class allows the classloader to load {@link Dsn} without exceptions.
+ * </p>
  */
 final class JndiLookup {
     /**
@@ -42,12 +43,5 @@ final class JndiLookup {
             logger.warn("Odd RuntimeException while testing for JNDI", e);
         }
         return dsn;
-    }
-
-    @Override
-    public String toString() {
-        return "JndiLookup{"
-                + "JNDI_DSN_NAME='" + JNDI_DSN_NAME + '\''
-                + '}';
     }
 }

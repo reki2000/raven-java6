@@ -23,6 +23,7 @@ import java.util.logging.Logger;
  * ContextListener stating an UDP socket when the servlet container starts.
  * <p>
  * This listener allows a {@link DatagramSocket} to be started to listen to UDP requests.
+ * </p>
  */
 @WebListener
 public class SentryUdpContextListener implements ServletContextListener {
@@ -88,7 +89,7 @@ public class SentryUdpContextListener implements ServletContextListener {
         }
 
         private Map<String, String> parseAuthHeader(InputStream inputStream) throws IOException {
-            Map<String, String> authHeader = new HashMap<>();
+            Map<String, String> authHeader = new HashMap<String, String>();
 
             int i;
             StringBuilder sb = new StringBuilder();

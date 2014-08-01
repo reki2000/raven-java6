@@ -2,8 +2,8 @@ package net.kencochrane.raven.marshaller.json;
 
 import mockit.Injectable;
 import mockit.NonStrictExpectations;
-import mockit.Tested;
 import net.kencochrane.raven.event.interfaces.StackTraceInterface;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static net.kencochrane.raven.marshaller.json.JsonTestTool.*;
@@ -11,10 +11,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public class StackTraceInterfaceBindingTest {
-    @Tested
-    private StackTraceInterfaceBinding interfaceBinding = null;
+    private StackTraceInterfaceBinding interfaceBinding;
     @Injectable
-    private StackTraceInterface mockStackTraceInterface = null;
+    private StackTraceInterface mockStackTraceInterface;
+
+    @BeforeMethod
+    public void setUp() throws Exception {
+        interfaceBinding = new StackTraceInterfaceBinding();
+    }
 
     @Test
     public void testSingleStackFrame() throws Exception {

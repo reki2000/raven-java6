@@ -1,44 +1,33 @@
 package net.kencochrane.raven;
 
 import mockit.Injectable;
-import mockit.NonStrictExpectations;
-import mockit.Tested;
 import mockit.Verifications;
 import net.kencochrane.raven.connection.Connection;
 import net.kencochrane.raven.event.Event;
 import net.kencochrane.raven.event.EventBuilder;
 import net.kencochrane.raven.event.helper.EventBuilderHelper;
 import net.kencochrane.raven.event.interfaces.ExceptionInterface;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class RavenTest {
-    @Tested
-    private Raven raven = null;
+    private Raven raven;
     @Injectable
-    private Connection mockConnection = null;
+    private Connection mockConnection;
     @Injectable
-    private Event mockEvent = null;
+    private Event mockEvent;
 
-    @Test
-    public void testSendEvent() throws Exception {
-        raven.sendEvent(mockEvent);
-
-        new Verifications() {{
-            mockConnection.send(mockEvent);
-        }};
+    @BeforeMethod
+    public void setUp() throws Exception {
+        raven = new Raven();
+        raven.setConnection(mockConnection);
     }
 
     @Test
-    public void testSendEventFailingIsCaught() throws Exception {
-        new NonStrictExpectations() {{
-            mockConnection.send((Event) any);
-            result = new RuntimeException();
-        }};
+    public void testSendEvent() throws Exception {
         raven.sendEvent(mockEvent);
 
         new Verifications() {{
@@ -114,24 +103,5 @@ public class RavenTest {
         new Verifications() {{
             mockBuilderHelper.helpBuildingEvent(mockEventBuilder);
         }};
-    }
-
-    @Test
-    public void testCloseConnectionSuccessful() throws Exception {
-        raven.closeConnection();
-
-        new Verifications() {{
-            mockConnection.close();
-        }};
-    }
-
-    @Test(expectedExceptions = RuntimeException.class)
-    public void testCloseConnectionFailed() throws Exception {
-        new NonStrictExpectations() {{
-            mockConnection.close();
-            result = new IOException();
-        }};
-
-        raven.closeConnection();
     }
 }

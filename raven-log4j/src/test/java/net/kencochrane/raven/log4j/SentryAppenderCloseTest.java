@@ -3,6 +3,7 @@ package net.kencochrane.raven.log4j;
 import mockit.*;
 import net.kencochrane.raven.Raven;
 import net.kencochrane.raven.RavenFactory;
+import net.kencochrane.raven.connection.Connection;
 import net.kencochrane.raven.dsn.Dsn;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -14,16 +15,20 @@ public class SentryAppenderCloseTest {
     private MockUpErrorHandler mockUpErrorHandler;
     @Injectable
     private Raven mockRaven = null;
-    @SuppressWarnings("unused")
+    @Injectable
+    private Connection mockConnection = null;
     @Mocked("ravenInstance")
-    private RavenFactory mockRavenFactory = null;
-    @SuppressWarnings("unused")
+    private RavenFactory mockRavenFactory;
     @Mocked("dsnLookup")
-    private Dsn mockDsn = null;
+    private Dsn mockDsn;
 
     @BeforeMethod
     public void setUp() throws Exception {
         mockUpErrorHandler = new MockUpErrorHandler();
+        new NonStrictExpectations() {{
+            mockRaven.getConnection();
+            result = mockConnection;
+        }};
     }
 
     private void assertNoErrorsInErrorHandler() throws Exception {
@@ -39,7 +44,7 @@ public class SentryAppenderCloseTest {
         sentryAppender.close();
 
         new Verifications() {{
-            mockRaven.closeConnection();
+            mockConnection.close();
         }};
         assertNoErrorsInErrorHandler();
     }
@@ -60,7 +65,7 @@ public class SentryAppenderCloseTest {
         sentryAppender.close();
 
         new Verifications() {{
-            mockRaven.closeConnection();
+            mockConnection.close();
         }};
         assertNoErrorsInErrorHandler();
     }
@@ -102,7 +107,7 @@ public class SentryAppenderCloseTest {
         sentryAppender.close();
 
         new Verifications() {{
-            mockRaven.closeConnection();
+            mockConnection.close();
             times = 1;
         }};
         assertNoErrorsInErrorHandler();

@@ -1,5 +1,6 @@
 package net.kencochrane.raven.dsn;
 
+import net.kencochrane.raven.Raven;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,7 @@ public class Dsn {
      * Name of the environment and system variables containing the DSN.
      */
     public static final String DSN_VARIABLE = "SENTRY_DSN";
-    private static final Logger logger = LoggerFactory.getLogger(Dsn.class);
+    private static final Logger logger = LoggerFactory.getLogger(Raven.class);
     private String secretKey;
     private String publicKey;
     private String projectId;
@@ -39,31 +40,22 @@ public class Dsn {
     /**
      * Creates a DSN based on a String.
      *
-     * @param dsn DSN in a string form.
-     * @throws InvalidDsnException the given DSN is not valid.
+     * @param dsn dsn in a string form.
+     * @throws InvalidDsnException the given DSN isn't usable.
      */
     public Dsn(String dsn) throws InvalidDsnException {
-        this(URI.create(dsn));
-    }
-
-    /**
-     * Creates a DSN based on a URI.
-     *
-     * @param dsn DSN in URI form.
-     * @throws InvalidDsnException the given DSN is not valid.
-     */
-    public Dsn(URI dsn) throws InvalidDsnException {
         if (dsn == null)
             throw new InvalidDsnException("The sentry DSN must be provided and not be null");
 
-        options = new HashMap<>();
-        protocolSettings = new HashSet<>();
+        options = new HashMap<String, String>();
+        protocolSettings = new HashSet<String>();
 
-        extractProtocolInfo(dsn);
-        extractUserKeys(dsn);
-        extractHostInfo(dsn);
-        extractPathInfo(dsn);
-        extractOptions(dsn);
+        URI dsnUri = URI.create(dsn);
+        extractProtocolInfo(dsnUri);
+        extractUserKeys(dsnUri);
+        extractHostInfo(dsnUri);
+        extractPathInfo(dsnUri);
+        extractOptions(dsnUri);
 
         makeOptionsImmutable();
 
@@ -89,7 +81,9 @@ public class Dsn {
             // Check that JNDI is available (not available on Android) by loading InitialContext
             Class.forName("javax.naming.InitialContext", false, Dsn.class.getClassLoader());
             dsn = JndiLookup.jndiLookup();
-        } catch (ClassNotFoundException | NoClassDefFoundError e) {
+        } catch (ClassNotFoundException e) {
+            logger.debug("JNDI not available");
+        } catch (NoClassDefFoundError e) {
             logger.debug("JNDI not available");
         }
 
@@ -179,7 +173,7 @@ public class Dsn {
     }
 
     /**
-     * Makes protocol and dsn options immutable to allow external usage.
+     * Makes protocol and dsn options immutable to allow an external usage.
      */
     private void makeOptionsImmutable() {
         // Make the options immutable
@@ -191,9 +185,10 @@ public class Dsn {
      * Validates internally the DSN, and check for mandatory elements.
      * <p>
      * Mandatory elements are the {@link #host}, {@link #publicKey}, {@link #secretKey} and {@link #projectId}.
+     * </p>
      */
     private void validate() {
-        List<String> missingElements = new LinkedList<>();
+        List<String> missingElements = new LinkedList<String>();
         if (host == null)
             missingElements.add("host");
         if (publicKey == null)
@@ -284,8 +279,6 @@ public class Dsn {
 
     @Override
     public String toString() {
-        return "Dsn{"
-                + "uri=" + uri
-                + '}';
+        return getUri().toString();
     }
 }

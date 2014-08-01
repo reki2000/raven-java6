@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import mockit.Delegate;
 import mockit.Injectable;
 import mockit.NonStrictExpectations;
-import mockit.Tested;
 import net.kencochrane.raven.event.interfaces.ExceptionInterface;
 import net.kencochrane.raven.event.interfaces.SentryException;
 import net.kencochrane.raven.event.interfaces.StackTraceInterface;
@@ -20,23 +19,23 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public class ExceptionInterfaceBindingTest {
-    @Tested
-    private ExceptionInterfaceBinding interfaceBinding = null;
+    private ExceptionInterfaceBinding interfaceBinding;
     @Injectable
-    private ExceptionInterface mockExceptionInterface = null;
+    private ExceptionInterface mockExceptionInterface;
     @Injectable
-    private InterfaceBinding<StackTraceInterface> mockStackTraceInterfaceBinding = null;
+    private InterfaceBinding<StackTraceInterface> mockStackTraceInterfaceBinding;
 
     @BeforeMethod
     public void setUp() throws Exception {
+        interfaceBinding = new ExceptionInterfaceBinding(mockStackTraceInterfaceBinding);
+
         new NonStrictExpectations() {{
             mockStackTraceInterfaceBinding.writeInterface(withInstanceOf(JsonGenerator.class), (StackTraceInterface) any);
-            result = new Delegate<Void>() {
-                @SuppressWarnings("unused")
-                public void writeInterface(JsonGenerator generator, StackTraceInterface sentryInterface)
+            result = new Delegate() {
+                public void writeInterface(JsonGenerator jsonGenerator, StackTraceInterface stackTraceInterface)
                         throws IOException {
-                    generator.writeStartObject();
-                    generator.writeEndObject();
+                    jsonGenerator.writeStartObject();
+                    jsonGenerator.writeEndObject();
                 }
             };
         }};
@@ -49,8 +48,7 @@ public class ExceptionInterfaceBindingTest {
         final Throwable throwable = new IllegalStateException(message);
         new NonStrictExpectations() {{
             mockExceptionInterface.getExceptions();
-            result = new Delegate<Deque<SentryException>>() {
-                @SuppressWarnings("unused")
+            result = new Delegate<Void>() {
                 public Deque<SentryException> getExceptions() {
                     return SentryException.extractExceptionQueue(throwable);
                 }
@@ -69,8 +67,7 @@ public class ExceptionInterfaceBindingTest {
         final Throwable throwable = new DefaultPackageException();
         new NonStrictExpectations() {{
             mockExceptionInterface.getExceptions();
-            result = new Delegate<Deque<SentryException>>() {
-                @SuppressWarnings("unused")
+            result = new Delegate<Void>() {
                 public Deque<SentryException> getExceptions() {
                     return SentryException.extractExceptionQueue(throwable);
                 }
@@ -91,8 +88,7 @@ public class ExceptionInterfaceBindingTest {
         final Throwable throwable2 = new IllegalStateException(message2, throwable1);
         new NonStrictExpectations() {{
             mockExceptionInterface.getExceptions();
-            result = new Delegate<Deque<SentryException>>() {
-                @SuppressWarnings("unused")
+            result = new Delegate<Void>() {
                 public Deque<SentryException> getExceptions() {
                     return SentryException.extractExceptionQueue(throwable2);
                 }
@@ -110,8 +106,9 @@ public class ExceptionInterfaceBindingTest {
  * Exception used to test exceptions defined in the default package.
  * <p>
  * Obviously we can't use an Exception which is really defined in the default package within those tests
- * (can't import it), so instead set the name of the class to remove the package name.<br>
+ * (can't import it), so instead set the name of the class to remove the package name.<br />
  * {@code Deencapsulation.setField(Object) DefaultPackageException.class, "name", "DefaultPackageClass")}
+ * </p>
  */
 class DefaultPackageException extends Exception {
 }

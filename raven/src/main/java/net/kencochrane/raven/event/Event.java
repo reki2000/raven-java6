@@ -13,16 +13,20 @@ import java.util.UUID;
  * <p>
  * For security purposes, an event should be created from an {@link EventBuilder} only, and be completely immutable
  * once it has been fully generated.
+ * </p>
  * <p>
  * Notes to developers:
  * <ul>
  * <li>
  * In order to ensure that a Event can't be modified externally, the setters should have a package visibility.
+ * </li>
  * <li>
  * A proper immutable Object should only contain immutable Objects and primitives, this must be ensured before
- * publishing the Event.<br>
+ * publishing the Event.<br />
  * There is one exception, the {@link #extra} section can't be transformed to be completely immutable.
+ * </li>
  * </ul>
+ * </p>
  */
 public class Event implements Serializable {
     /**
@@ -57,8 +61,9 @@ public class Event implements Serializable {
      * A map or list of tags for this event.
      * <p>
      * Automatically created with a Map that is made unmodifiable by the {@link EventBuilder}.
+     * </p>
      */
-    private Map<String, String> tags = new HashMap<>();
+    private Map<String, String> tags = new HashMap<String, String>();
     /**
      * Identifies the host client from which the event was recorded.
      */
@@ -67,8 +72,9 @@ public class Event implements Serializable {
      * A map or list of additional properties for this event.
      * <p>
      * Automatically created with a Map that is made unmodifiable by the {@link EventBuilder}.
+     * </p>
      */
-    private Map<String, Object> extra = new HashMap<>();
+    private Map<String, Object> extra = new HashMap<String, Object>();
     /**
      * Checksum for the event, allowing to group events with a similar checksum.
      */
@@ -77,8 +83,9 @@ public class Event implements Serializable {
      * Additional interfaces for other information and metadata.
      * <p>
      * Automatically created with a Map that is made unmodifiable by the {@link EventBuilder}.
+     * </p>
      */
-    private Map<String, SentryInterface> sentryInterfaces = new HashMap<>();
+    private Map<String, SentryInterface> sentryInterfaces = new HashMap<String, SentryInterface>();
 
     /**
      * Creates a new Event (should be called only through {@link EventBuilder} with the specified identifier.

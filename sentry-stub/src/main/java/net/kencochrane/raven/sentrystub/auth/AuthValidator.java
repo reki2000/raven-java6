@@ -9,6 +9,7 @@ import java.util.logging.Logger;
  * <p>
  * The validation of a header goes from the validation of the content to the authorisation check for the given public
  * and secret keys.
+ * </p>
  */
 public class AuthValidator {
     private static final Logger logger = Logger.getLogger(AuthValidator.class.getCanonicalName());
@@ -17,8 +18,8 @@ public class AuthValidator {
     private static final String PUBLIC_KEY_PARAMETER = "sentry_key";
     private static final String SECRET_KEY_PARAMETER = "sentry_secret";
     private static final String SENTRY_CLIENT_PARAMETER = "sentry_client";
-    private final Map<String, String> publicKeySecretKey = new HashMap<>();
-    private final Map<String, String> publicKeyProjectId = new HashMap<>();
+    private final Map<String, String> publicKeySecretKey = new HashMap<String, String>();
+    private final Map<String, String> publicKeyProjectId = new HashMap<String, String>();
 
     /**
      * Adds a user to consider as valid of an Auth header.
@@ -78,6 +79,7 @@ public class AuthValidator {
      * Validates the version of the protocol given in the Auth header.
      * <p>
      * The only supported versions are listed in {@link #SENTRY_PROTOCOL_VERSIONS}.
+     * </p>
      *
      * @param authSentryVersion    version of the Sentry protocol given in the auth header.
      * @param invalidAuthException exception thrown if the auth header is invalid.
@@ -92,6 +94,7 @@ public class AuthValidator {
      * Validates the public and secret user keys provided in the Auth Header.
      * <p>
      * Valid keys are listed in {@link #publicKeySecretKey}.
+     * </p>
      *
      * @param publicKey            public key used to identify a user.
      * @param secretKey            secret key used as a password.
@@ -135,6 +138,7 @@ public class AuthValidator {
      * Validates the client part of the header.
      * <p>
      * The client should always be provided.
+     * </p>
      *
      * @param client               string identifying a client type (such as Java/3.0)
      * @param invalidAuthException exception thrown if the auth header is invalid.

@@ -2,8 +2,8 @@ package net.kencochrane.raven.marshaller.json;
 
 import mockit.Injectable;
 import mockit.NonStrictExpectations;
-import mockit.Tested;
 import net.kencochrane.raven.event.interfaces.MessageInterface;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -14,10 +14,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public class MessageInterfaceBindingTest {
-    @Tested
-    private MessageInterfaceBinding interfaceBinding = null;
+    private MessageInterfaceBinding interfaceBinding;
     @Injectable
-    private MessageInterface mockMessageInterface = null;
+    private MessageInterface mockMessageInterface;
+
+    @BeforeMethod
+    public void setUp() throws Exception {
+        interfaceBinding = new MessageInterfaceBinding();
+    }
 
     @Test
     public void testSimpleMessage() throws Exception {

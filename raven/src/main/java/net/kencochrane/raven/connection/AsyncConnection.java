@@ -1,6 +1,6 @@
 package net.kencochrane.raven.connection;
 
-import net.kencochrane.raven.environment.RavenEnvironment;
+import net.kencochrane.raven.Raven;
 import net.kencochrane.raven.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * Instead of synchronously sending each event to a connection, use a ThreadPool to establish the connection
  * and submit the event.
+ * </p>
  */
 public class AsyncConnection implements Connection {
     private static final Logger logger = LoggerFactory.getLogger(AsyncConnection.class);
@@ -44,20 +45,19 @@ public class AsyncConnection implements Connection {
      * Creates a connection which will rely on an executor to send events.
      * <p>
      * Will propagate the {@link #close()} operation.
+     * </p>
      *
      * @param actualConnection connection used to send the events.
      * @param executorService  executorService used to process events, if null, the executorService will automatically
      *                         be set to {@code Executors.newSingleThreadExecutor()}
-     * @param gracefulShutdown Indicates whether or not the shutdown operation should be managed by a ShutdownHook.
      */
-    public AsyncConnection(Connection actualConnection, ExecutorService executorService, boolean gracefulShutdown) {
+    public AsyncConnection(Connection actualConnection, ExecutorService executorService) {
         this.actualConnection = actualConnection;
         if (executorService == null)
             this.executorService = Executors.newSingleThreadExecutor();
         else
             this.executorService = executorService;
-        if (gracefulShutdown)
-            addShutdownHook();
+        addShutdownHook();
     }
 
     /**
@@ -72,6 +72,7 @@ public class AsyncConnection implements Connection {
      * {@inheritDoc}
      * <p>
      * The event will be added to a queue and will be handled by a separate {@code Thread} later on.
+     * </p>
      */
     @Override
     public void send(Event event) {
@@ -84,8 +85,9 @@ public class AsyncConnection implements Connection {
      * <p>
      * Closing the {@link AsyncConnection} will attempt a graceful shutdown of the {@link #executorService} with a
      * timeout of {@link #SHUTDOWN_TIMEOUT}, allowing the current events to be submitted while new events will
-     * be rejected.<br>
+     * be rejected.<br />
      * If the shutdown times out, the {@code executorService} will be forced to shutdown.
+     * </p>
      */
     @Override
     public void close() throws IOException {
@@ -131,30 +133,29 @@ public class AsyncConnection implements Connection {
 
         @Override
         public void run() {
-            RavenEnvironment.startManagingThread();
             try {
                 // The current thread is managed by raven
+                Raven.startManagingThread();
                 actualConnection.send(event);
             } catch (Exception e) {
                 logger.error("An exception occurred while sending the event to Sentry.", e);
             } finally {
-                RavenEnvironment.stopManagingThread();
+                Raven.stopManagingThread();
             }
         }
     }
 
     private final class ShutDownHook extends Thread {
-        @Override
         public void run() {
-            RavenEnvironment.startManagingThread();
             try {
                 // The current thread is managed by raven
+                Raven.startManagingThread();
                 logger.info("Automatic shutdown of the async connection");
                 AsyncConnection.this.doClose();
             } catch (Exception e) {
                 logger.error("An exception occurred while closing the connection.", e);
             } finally {
-                RavenEnvironment.stopManagingThread();
+                Raven.stopManagingThread();
             }
         }
     }
