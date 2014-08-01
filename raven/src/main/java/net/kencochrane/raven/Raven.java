@@ -37,7 +37,7 @@ public class Raven {
         }
     };
     private static final Logger logger = LoggerFactory.getLogger(Raven.class);
-    private final Set<EventBuilderHelper> builderHelpers = new HashSet<>();
+    private final Set<EventBuilderHelper> builderHelpers = new HashSet<EventBuilderHelper>();
     private Connection connection;
 
     /**

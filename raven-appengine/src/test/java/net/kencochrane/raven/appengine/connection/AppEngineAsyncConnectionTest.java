@@ -118,7 +118,7 @@ public class AppEngineAsyncConnectionTest {
         asyncConnection2.send(mockEvent);
 
         new Verifications() {{
-            List<TaskOptions> taskOptionsList = new ArrayList<>();
+            List<TaskOptions> taskOptionsList = new ArrayList<TaskOptions>();
             DeferredTask deferredTask;
 
             mockQueue.add(withCapture(taskOptionsList));

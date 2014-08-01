@@ -89,7 +89,7 @@ public class SentryUdpContextListener implements ServletContextListener {
         }
 
         private Map<String, String> parseAuthHeader(InputStream inputStream) throws IOException {
-            Map<String, String> authHeader = new HashMap<>();
+            Map<String, String> authHeader = new HashMap<String, String>();
 
             int i;
             StringBuilder sb = new StringBuilder();

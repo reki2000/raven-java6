@@ -70,11 +70,11 @@ public class AppEngineEventBuilderHelperTest {
         eventBuilderHelper.helpBuildingEvent(mockEventBuilder);
 
         new Verifications() {{
-            List<String> tagNames = new LinkedList<>();
-            List<String> tagValues = new LinkedList<>();
+            List<String> tagNames = new LinkedList<String>();
+            List<String> tagValues = new LinkedList<String>();
             mockEventBuilder.addTag(withCapture(tagNames), withCapture(tagValues));
 
-            Map<String, String> tags = new HashMap<>();
+            Map<String, String> tags = new HashMap<String, String>();
             for (int i = 0; i < tagNames.size(); i++) {
                 String tagName = tagNames.get(i);
                 tags.put(tagName, tagValues.get(i));
@@ -95,11 +95,11 @@ public class AppEngineEventBuilderHelperTest {
         eventBuilderHelper.helpBuildingEvent(mockEventBuilder);
 
         new Verifications() {{
-            List<String> tagNames = new LinkedList<>();
-            List<String> tagValues = new LinkedList<>();
+            List<String> tagNames = new LinkedList<String>();
+            List<String> tagValues = new LinkedList<String>();
             mockEventBuilder.addTag(withCapture(tagNames), withCapture(tagValues));
 
-            Map<String, String> tags = new HashMap<>();
+            Map<String, String> tags = new HashMap<String, String>();
             for (int i = 0; i < tagNames.size(); i++) {
                 String tagName = tagNames.get(i);
                 tags.put(tagName, tagValues.get(i));

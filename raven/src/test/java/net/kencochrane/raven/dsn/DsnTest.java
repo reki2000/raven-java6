@@ -86,15 +86,15 @@ public class DsnTest {
         System.clearProperty("SENTRY_DSN");
     }
 
-    @Test
-    public void testDsnLookupWithEnvironmentVariable() throws Exception {
-        String dsn = "759ed060-dd4f-4478-8a1a-3f23e044787c";
-        setEnv("SENTRY_DSN", dsn);
-
-        assertThat(Dsn.dsnLookup(), is(dsn));
-
-        removeEnv("SENTRY_DSN");
-    }
+//    @Test
+//    public void testDsnLookupWithEnvironmentVariable() throws Exception {
+//        String dsn = "759ed060-dd4f-4478-8a1a-3f23e044787c";
+//        setEnv("SENTRY_DSN", dsn);
+//
+//        assertThat(Dsn.dsnLookup(), is(dsn));
+//
+//        removeEnv("SENTRY_DSN");
+//    }
 
     /**
      * Sets an environment variable during Unit-Test.
