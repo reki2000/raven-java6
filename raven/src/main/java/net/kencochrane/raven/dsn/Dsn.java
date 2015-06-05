@@ -279,6 +279,6 @@ public class Dsn {
 
     @Override
     public String toString() {
-        return getUri().toString();
+        return getUri() != null ? getUri().toString() : "";
     }
 }

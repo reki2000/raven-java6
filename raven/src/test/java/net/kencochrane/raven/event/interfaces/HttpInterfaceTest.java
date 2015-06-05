@@ -106,7 +106,7 @@ public class HttpInterfaceTest {
         final int localPort = 321;
         final String protocol = "f4261066-8588-43d3-a71f-9e95fd3e0d65";
         final boolean secure = true;
-        final boolean asyncStarted = true;
+        final boolean asyncStarted = false;
         final String authType = "b4ec1983-06d1-4f0a-b467-435d2322d69f";
         final String remoteUser = "beae8915-1162-425e-afda-687146b3e3df";
         final String headerKey = "2c4a28c6-cef6-4847-92be-bf161ec4edc6";

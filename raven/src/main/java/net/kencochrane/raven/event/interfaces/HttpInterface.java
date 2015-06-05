@@ -57,7 +57,7 @@ public class HttpInterface implements SentryInterface {
         this.localPort = request.getLocalPort();
         this.protocol = request.getProtocol();
         this.secure = request.isSecure();
-        this.asyncStarted = request.isAsyncStarted();
+        this.asyncStarted = false; // request.isAsyncStarted();
         this.authType = request.getAuthType();
         this.remoteUser = request.getRemoteUser();
         this.headers = new HashMap<String, Collection<String>>();
